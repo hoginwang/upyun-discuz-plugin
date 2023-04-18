@@ -20,9 +20,9 @@ function upyun_uninstall($plugin_id, $version, $files) {
 
 function upyun_get_discuz_version() {
 	switch(DISCUZ_VERSION) {
-        case 'X3.5':
+		case 'X3.5':
 			$version = 'discuz_3_5';
-            break;
+			break;
 		default:
 			$version = false;
 	}
@@ -83,8 +83,17 @@ function upyun_attachment_download($attach, $module) {
 			$attach['filename'] = urlencode($attach['filename']);
 		}
 		$path = $module ? "/$module/{$attach['attachment']}" : $attach['attachment'];
-		$sign = upyun_gen_sign($path);
-		dheader('Location:' . $url . $attach['attachment'] . "?_upd={$attach['filename']}" . ($sign ? '&_upt=' . $sign : ''));
+		$sign_add = '';
+		switch($upyun_config['anti_hotlinking']){
+			case 1:
+				$sign = upyun_gen_signA($path);
+				$sign_add = '&path='.$path.'&sign='.$sign.'&auth_key='.$sign;
+				break;
+			default:
+				$sign = upyun_gen_sign($path);
+				$sign_add = '&_upt='.$sign;
+		}
+		dheader('Location:'.$url.$attach['attachment'].'?_upd='.$attach['filename'].$sign_add);
 	}
 }
 
@@ -95,6 +104,44 @@ function upyun_gen_sign($path = '/') {
 	if($upyun_config['token'] && $upyun_config['token_timeout']){
 		$etime = time() + $upyun_config['token_timeout'];
 		$sign = substr(md5($upyun_config['token'].'&'.$etime.'&'.$path), 12,8).$etime;
+	} else {
+		$sign = '';
+	}
+	return $sign;
+}
+
+function upyun_gen_signA($path = '/') {
+	global $_G;
+	$upyun_config = $_G['cache']['plugin']['upyun'];
+	
+	function gen_uuid(){
+		mt_srand(crc32(microtime()));
+		$a = sprintf('%04x%04x',
+			mt_rand(0, 0xffff ), mt_rand(0, 0xffff)
+		);
+		$b = sprintf('%04x-%04x',
+			mt_rand(0, 0xffff ),
+			mt_rand(0, 0x0fff ) | 0x4000
+		);
+		mt_srand(crc32(microtime()));
+		$c = sprintf('%04x%04x',
+			mt_rand(0, 0x3fff) | 0x8000,
+			mt_rand(0, 0xffff)
+		);
+		$d = sprintf('%04x%04x',
+			mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+		);
+		return $a.'-'.$b.'-'.$c.$d;
+	}
+
+	if($upyun_config['token'] && $upyun_config['token_timeout']){
+		$etime = $_SERVER['REQUEST_TIME'];
+		$rand_uuid = gen_uuid();
+		$rand = strtr($rand_uuid, array('-' => ''));
+		//$sstring = "URI-Timestamp-rand-uid-PrivateKey"
+		$sign_string = $path."-".$etime."-".$rand."-0-".$upyun_config['token'];
+		$md5 = md5($sign_string);
+		$sign = $etime."-".$rand."-0-".$md5;
 	} else {
 		$sign = '';
 	}
@@ -116,7 +163,7 @@ function upyun_get_install_files() {
 
 function upyun_get_file_md5() {
 	switch(DISCUZ_VERSION) {
-        case 'X3.5':
+		case 'X3.5':
 			return array(
 				'discuz_ftp.php' => '65e20ff0b6a2a2946b873c4b531a924f',
 				'forum_attachment.php' => 'c0cbedeafe2ad83b3399aab7999df1ec',
@@ -126,7 +173,7 @@ function upyun_get_file_md5() {
 				'function_post.php' => '7e65b5f188775152ee8f47ad5c079c48',
 				'portal_attachment.php' => '56ace87d41a73f975150775e6e5ad79a',
 			);
-            break;
+			break;
 		default:
 			return array();
 	}
@@ -145,4 +192,3 @@ function upyun_md5_file($path) {
 
 	return md5(preg_replace("/(?<!\r)\n/", "\r\n", $f));
 }
-

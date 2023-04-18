@@ -6,9 +6,10 @@ include_once 'function_upyun.php';
 class plugin_upyun {
 	function global_header() {
 		global $_G;
+		if(!($upyun_config['anti_hotlinking'] == 0 || $upyun_config['token'] || $upyun_config['token_timeout'])) return;
 		//防盗链 token 写入用户网站的一级域名
 		$cookie_domain = substr($_SERVER['SERVER_NAME'], strpos($_SERVER['SERVER_NAME'], '.'));
-		setcookie('_upt', upyun_gen_sign(), $_SERVER['REQUEST_TIME'] + 180, '/', $cookie_domain);
+		setcookie('_upt', upyun_gen_sign(), $_SERVER['REQUEST_TIME'] + 180, '/', $cookie_domain, $_G['isHTTPS'], true);
 	}
 
 	function common() {

@@ -91,17 +91,19 @@
 			</item>
 			<item id="5">
 				<item id="displayorder"><![CDATA[5]]></item>
-				<item id="title"><![CDATA[（已停用）表单 API 密钥]]></item>
-				<item id="description"><![CDATA[插件 1.4.5 版本起转用 UPYUN 新 PHP-SDK，但当前版本未适配新 SDK 的表单 API。选填 建议填写，否则将无法激活大文件分块上传]]></item>
-				<item id="variable"><![CDATA[form_api_key]]></item>
-				<item id="type"><![CDATA[text]]></item>
-				<item id="value"><![CDATA[]]></item>
-				<item id="extra"><![CDATA[]]></item>
+				<item id="title"><![CDATA[URL 鉴权方式]]></item>
+				<item id="description"><![CDATA[又拍云默认：在链接加入 _upt 参数，并设置 cookies。参见 https://help.upyun.com/knowledge-base/cdn-token-limite/
+方式 A：在链接加入 sign 参数，适合云存储域名与论坛域名不处于一个域的情况。cookies。参见 阿里云 https://help.aliyun.com/document_detail/85113.htm、腾讯云 https://cloud.tencent.com/document/product/228/76110]]></item>
+				<item id="variable"><![CDATA[anti_hotlinking]]></item>
+				<item id="type"><![CDATA[select]]></item>
+				<item id="value"><![CDATA[0]]></item>
+				<item id="extra"><![CDATA[0 = 又拍云默认
+1 = 方式A]]></item>
 			</item>
 			<item id="6">
 				<item id="displayorder"><![CDATA[6]]></item>
 				<item id="title"><![CDATA[防盗链 TOKEN]]></item>
-				<item id="description"><![CDATA[选填 只能在 UPYUN 空间绑定了和论坛根域名相同 的子域名时，才能设置，否则导致附件无法被访问。例如论坛域名为 www.discuz.com 时，如果 UPYUN 空间访问域名为 static.discuz.com 或其他类似 **.discuz.com 格式的域名则可以使用]]></item>
+				<item id="description"><![CDATA[选填 如鉴权方式选择“又拍云默认”，则只能在 UPYUN 空间绑定了和论坛根域名相同的子域名时才能设置，否则将导致附件无法被访问。例如论坛域名为 www.discuz.com 时，如果 UPYUN 空间访问域名为 static.discuz.com 或其他类似 *.discuz.com 格式的域名则可以使用]]></item>
 				<item id="variable"><![CDATA[token]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
@@ -110,9 +112,18 @@
 			<item id="7">
 				<item id="displayorder"><![CDATA[7]]></item>
 				<item id="title"><![CDATA[防盗链过期时间（单位：秒）]]></item>
-				<item id="description"><![CDATA[选填 说明：如果开启防盗链功能则必须填写大于 0 的值]]></item>
+				<item id="description"><![CDATA[选填 说明：如果开启防盗链功能则必须填写大于 0 的值。留空或填写 0 即不开启防盗链 URL 鉴权]]></item>
 				<item id="variable"><![CDATA[token_timeout]]></item>
 				<item id="type"><![CDATA[number]]></item>
+				<item id="value"><![CDATA[]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
+			<item id="8">
+				<item id="displayorder"><![CDATA[8]]></item>
+				<item id="title"><![CDATA[（已停用）表单 API 密钥]]></item>
+				<item id="description"><![CDATA[插件 1.4.5 版本起转用 UPYUN 新 PHP-SDK，但当前版本未适配新 SDK 的表单 API。选填 建议填写，否则将无法激活大文件分块上传]]></item>
+				<item id="variable"><![CDATA[form_api_key]]></item>
+				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
