@@ -21,7 +21,6 @@ class discuz_ftp
 
 	var $enabled = false;
 	var $config = array();
-	var $api_access = array(UpYun::ED_AUTO, UpYun::ED_TELECOM, UpYun::ED_CNC, UpYun::ED_CTT);
 	var $connectid;
 	var $_error;
 	var $upyun_config = array();
@@ -48,7 +47,6 @@ class discuz_ftp
 		$this->config['username'] = discuz_ftp::clear($this->config['username']);
 		$this->config['password'] = authcode($this->config['password'], 'DECODE', md5(getglobal('config/security/authkey')));
 		$this->config['timeout'] = intval($this->config['timeout']);
-		$this->config['api_access'] = $this->api_access[$this->config['port']];
 		$this->connectid = true;
 		$this->enabled = true;
 	}
@@ -63,7 +61,7 @@ class discuz_ftp
 		if(!$fh) {
 			return 0;
 		}
-		$upyun = new Upyun($serviceConfig);
+		$upyun = new Upyun($service_config);
 		$rsp = $upyun->write('/'.ltrim($target, '/'), $fh, true);
 		return $rsp;
 	}
@@ -94,7 +92,7 @@ class discuz_ftp
 			$this->upyun_config['operator_name'],
 			$this->upyun_config['operator_pwd']
 		);
-		$upyun = new Upyun($serviceConfig);
+		$upyun = new Upyun($service_config);
 		$remote_file = discuz_ftp::clear($remote_file);
 		try{
 			$rsp = $upyun->info('/'.ltrim($remote_file, '/'));
@@ -115,7 +113,7 @@ class discuz_ftp
 			$this->upyun_config['operator_name'],
 			$this->upyun_config['operator_pwd']
 		);
-		$upyun = new Upyun($serviceConfig);
+		$upyun = new Upyun($service_config);
 		$path = discuz_ftp::clear($path);
 		try{
 			$rsp = $upyun->delete('/'.ltrim($path, '/'));
@@ -132,7 +130,7 @@ class discuz_ftp
 			$this->upyun_config['operator_name'],
 			$this->upyun_config['operator_pwd']
 		);
-		$upyun = new Upyun($serviceConfig);
+		$upyun = new Upyun($service_config);
 		$remote_file = discuz_ftp::clear($remote_file);
 		$local_file = discuz_ftp::clear($local_file);
 		try{
