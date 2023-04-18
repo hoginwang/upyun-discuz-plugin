@@ -11,17 +11,10 @@ if(!defined('IN_DISCUZ')) {
 	exit('Access Denied');
 }
 
-if(!defined('FTP_ERR_SERVER_DISABLED')) {
-	define('FTP_ERR_SERVER_DISABLED', -100);
-	define('FTP_ERR_CONFIG_OFF', -101);
-	define('FTP_ERR_CONNECT_TO_SERVER', -102);
-	define('FTP_ERR_USER_NO_LOGGIN', -103);
-	define('FTP_ERR_CHDIR', -104);
-	define('FTP_ERR_MKDIR', -105);
-	define('FTP_ERR_SOURCE_READ', -106);
-	define('FTP_ERR_TARGET_WRITE', -107);
-}
-
+include_once DISCUZ_ROOT . "source/plugin/upyun/sdk/upyun.class.php";
+include_once DISCUZ_ROOT . "source/plugin/upyun/sdk/upyun_multipart_upload/Upload.php";
+include_once DISCUZ_ROOT . "source/plugin/upyun/sdk/upyun_multipart_upload/Signature.php";
+include_once DISCUZ_ROOT . "source/plugin/upyun/sdk/upyun_multipart_upload/File.php";
 
 
 class discuz_ftp
@@ -29,10 +22,10 @@ class discuz_ftp
 
 	var $enabled = false;
 	var $config = array();
-
-	var $func;
+    var $api_access = array(UpYun::ED_AUTO, UpYun::ED_TELECOM, UpYun::ED_CNC, UpYun::ED_CTT);
 	var $connectid;
 	var $_error;
+    var $upyun_config = array();
 
 	public static function &instance($config = array()) {
 		static $object;
@@ -43,111 +36,56 @@ class discuz_ftp
 	}
 
 	function __construct($config = array()) {
+        global $_G;
 		$this->set_error(0);
+        loadcache('plugin');
+        $this->upyun_config = getglobal('cache/plugin/upyun');
 		$this->config = !$config ? getglobal('setting/ftp') : $config;
 		$this->enabled = false;
-		if(empty($this->config['on']) || empty($this->config['host'])) {
-			$this->set_error(FTP_ERR_CONFIG_OFF);
-		} else {
-			$this->func = $this->config['ssl'] && function_exists('ftp_ssl_connect') ? 'ftp_ssl_connect' : 'ftp_connect';
-			if($this->func == 'ftp_connect' && !function_exists('ftp_connect')) {
-				$this->set_error(FTP_ERR_SERVER_DISABLED);
-			} else {
-				$this->config['host'] = discuz_ftp::clear($this->config['host']);
-				$this->config['port'] = intval($this->config['port']);
-				$this->config['ssl'] = intval($this->config['ssl']);
-				$this->config['username'] = discuz_ftp::clear($this->config['username']);
-				$this->config['password'] = authcode($this->config['password'], 'DECODE', md5(getglobal('config/security/authkey')));
-				$this->config['timeout'] = intval($this->config['timeout']);
-				$this->enabled = true;
-			}
-		}
+		$this->config['host'] = discuz_ftp::clear($this->config['host']);
+		$this->config['port'] = intval($this->config['port']);
+		$this->config['ssl'] = intval($this->config['ssl']);
+        $this->config['bucketname'] = $this->config['host'];
+		$this->config['username'] = discuz_ftp::clear($this->config['username']);
+		$this->config['password'] = authcode($this->config['password'], 'DECODE', md5(getglobal('config/security/authkey')));
+		$this->config['timeout'] = intval($this->config['timeout']);
+        $this->config['api_access'] = $this->api_access[$this->config['port']];
+        $this->connectid = true;
+		$this->enabled = true;
 	}
 
 	function upload($source, $target) {
-		if($this->error()) {
-			return 0;
-		}
-		$old_dir = $this->ftp_pwd();
-		$dirname = dirname($target);
-		$filename = basename($target);
-		if(!$this->ftp_chdir($dirname)) {
-			if($this->ftp_mkdir($dirname)) {
-				$this->ftp_chmod($dirname);
-				if(!$this->ftp_chdir($dirname)) {
-					$this->set_error(FTP_ERR_CHDIR);
-				}
-				$this->ftp_put('index.htm', getglobal('setting/attachdir').'/index.htm', FTP_BINARY);
-			} else {
-				$this->set_error(FTP_ERR_MKDIR);
-			}
-		}
-
-		$res = 0;
-		if(!$this->error()) {
-			if($fp = @fopen($source, 'rb')) {
-				$res = $this->ftp_fput($filename, $fp, FTP_BINARY);
-				@fclose($fp);
-				!$res && $this->set_error(FTP_ERR_TARGET_WRITE);
-			} else {
-				$this->set_error(FTP_ERR_SOURCE_READ);
-			}
-		}
-
-		$this->ftp_chdir($old_dir);
-
-		return $res ? 1 : 0;
+        $file = new UpyunMultiPartFile($source);
+        if($file->getSize() > 1024 * 1024 && $this->upyun_config['form_api_key']) {
+            $sign = new UpyunMultipartSignature($this->upyun_config['form_api_key']);
+            $upload = new UpyunMultipartUpload($sign);
+            $upload->setBucketName($this->upyun_config['bucket_name']);
+            $upload->setBlockSize($upload->getBlockSizeAdaptive($file));
+            try {
+                $result = $upload->upload($file, array(
+                    'path' => '/' . ltrim($target, '/')
+                ));
+                return $result;
+            } catch(Exception $e) {
+                return 0;
+            }
+        } else {
+            $fh = fopen($source, 'rb');
+            if(!$fh) {
+                return 0;
+            }
+            $upyun = new UpYun(
+                $this->upyun_config['bucket_name'],
+                $this->upyun_config['operator_name'],
+                $this->upyun_config['operator_pwd']
+            );
+            $rsp = $upyun->writeFile('/'. ltrim($target, '/'), $fh, true);
+            return $rsp;
+        }
 	}
 
 	function connect() {
-		if(!$this->enabled || empty($this->config)) {
-			return 0;
-		} else {
-			return $this->ftp_connect(
-				$this->config['host'],
-				$this->config['username'],
-				$this->config['password'],
-				$this->config['attachdir'],
-				$this->config['port'],
-				$this->config['timeout'],
-				$this->config['ssl'],
-				$this->config['pasv']
-				);
-		}
-
-	}
-
-	function ftp_connect($ftphost, $username, $password, $ftppath, $ftpport = 21, $timeout = 30, $ftpssl = 0, $ftppasv = 0) {
-		$res = 0;
-		$fun = $this->func;
-		if($this->connectid = $fun($ftphost, $ftpport, 20)) {
-
-			$timeout && $this->set_option(FTP_TIMEOUT_SEC, $timeout);
-			if($this->ftp_login($username, $password)) {
-				$this->ftp_pasv($ftppasv);
-				if($this->ftp_chdir($ftppath)) {
-					$res =  $this->connectid;
-				} else {
-					$this->set_error(FTP_ERR_CHDIR);
-				}
-			} else {
-				$this->set_error(FTP_ERR_USER_NO_LOGGIN);
-			}
-
-		} else {
-			$this->set_error(FTP_ERR_CONNECT_TO_SERVER);
-		}
-
-		if($res > 0) {
-			$this->set_error();
-			$this->enabled = 1;
-		} else {
-			$this->enabled = 0;
-			$this->ftp_close();
-		}
-
-		return $res;
-
+        return 1;
 	}
 
 	function set_error($code = 0) {
@@ -162,97 +100,66 @@ class discuz_ftp
 		return str_replace(array( "\n", "\r", '..'), '', $str);
 	}
 
-
-	function set_option($cmd, $value) {
-		if(function_exists('ftp_set_option')) {
-			return @ftp_set_option($this->connectid, $cmd, $value);
-		}
-	}
-
-	function ftp_mkdir($directory) {
-		$directory = discuz_ftp::clear($directory);
-		$epath = explode('/', $directory);
-		$dir = '';$comma = '';
-		foreach($epath as $path) {
-			$dir .= $comma.$path;
-			$comma = '/';
-			$return = @ftp_mkdir($this->connectid, $dir);
-			$this->ftp_chmod($dir);
-		}
-		return $return;
-	}
-
 	function ftp_rmdir($directory) {
-		$directory = discuz_ftp::clear($directory);
-		return @ftp_rmdir($this->connectid, $directory);
-	}
-
-	function ftp_put($remote_file, $local_file, $mode = FTP_BINARY) {
-		$remote_file = discuz_ftp::clear($remote_file);
-		$local_file = discuz_ftp::clear($local_file);
-		$mode = intval($mode);
-		return @ftp_put($this->connectid, $remote_file, $local_file, $mode);
-	}
-
-	function ftp_fput($remote_file, $sourcefp, $mode = FTP_BINARY) {
-		$remote_file = discuz_ftp::clear($remote_file);
-		$mode = intval($mode);
-		return @ftp_fput($this->connectid, $remote_file, $sourcefp, $mode);
+		return 1;
 	}
 
 	function ftp_size($remote_file) {
+        $upyun = new UpYun(
+            $this->upyun_config['bucket_name'],
+            $this->upyun_config['operator_name'],
+            $this->upyun_config['operator_pwd']
+		);
 		$remote_file = discuz_ftp::clear($remote_file);
-		return @ftp_size($this->connectid, $remote_file);
+        try{
+            $rsp = $upyun->getFileInfo('/' . ltrim($remote_file, '/'));
+            return $rsp['x-upyun-file-size'];
+        }
+        catch(Exception $e){
+            return -1;
+        }
 	}
 
 	function ftp_close() {
-		return @ftp_close($this->connectid);
+		return 1;
 	}
 
 	function ftp_delete($path) {
+        $upyun = new UpYun(
+            $this->upyun_config['bucket_name'],
+            $this->upyun_config['operator_name'],
+            $this->upyun_config['operator_pwd']
+		);
 		$path = discuz_ftp::clear($path);
-		return @ftp_delete($this->connectid, $path);
+        try{
+            $rsp = $upyun->delete('/' . ltrim($path, '/'));
+            return $rsp;
+        }
+        catch(Exception $e){
+            return 0;
+        }
 	}
 
 	function ftp_get($local_file, $remote_file, $mode, $resumepos = 0) {
+        $upyun = new UpYun(
+            $this->upyun_config['bucket_name'],
+            $this->upyun_config['operator_name'],
+            $this->upyun_config['operator_pwd']
+		);
 		$remote_file = discuz_ftp::clear($remote_file);
 		$local_file = discuz_ftp::clear($local_file);
-		$mode = intval($mode);
-		$resumepos = intval($resumepos);
-		return @ftp_get($this->connectid, $local_file, $remote_file, $mode, $resumepos);
-	}
-
-	function ftp_login($username, $password) {
-		$username = $this->clear($username);
-		$password = str_replace(array("\n", "\r"), array('', ''), $password);
-		return @ftp_login($this->connectid, $username, $password);
-	}
-
-	function ftp_pasv($pasv) {
-		return @ftp_pasv($this->connectid, $pasv ? true : false);
-	}
-
-	function ftp_chdir($directory) {
-		$directory = discuz_ftp::clear($directory);
-		return @ftp_chdir($this->connectid, $directory);
-	}
-
-	function ftp_site($cmd) {
-		$cmd = discuz_ftp::clear($cmd);
-		return @ftp_site($this->connectid, $cmd);
-	}
-
-	function ftp_chmod($filename, $mod = 0777) {
-		$filename = discuz_ftp::clear($filename);
-		if(function_exists('ftp_chmod')) {
-			return @ftp_chmod($this->connectid, $mod, $filename);
-		} else {
-			return @ftp_site($this->connectid, 'CHMOD '.$mod.' '.$filename);
+        try{
+            if($fh = fopen($local_file,'wb')){
+            $rsp = $upyun->readFile('/'. ltrim($remote_file, '/'), $fh);
+            fclose($fh);
+            return $rsp;
+		}else{
+			return 0;
 		}
 	}
-
-	function ftp_pwd() {
-		return @ftp_pwd($this->connectid);
+	catch(Exception $e){
+		return 0;
+		}
 	}
 
 }

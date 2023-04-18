@@ -32,13 +32,14 @@ if(dsign($id.'|'.$dw.'|'.$dh) != $_GET['key']) {
 	dheader('location: '.$_G['siteurl'].'static/image/common/none.gif');
 }
 
-if($attach = C::t('forum_attachment_n')->fetch('aid:'.$daid, $daid, array(1, -1))) {
+if($attach = C::t('forum_attachment_n')->fetch_attachment('aid:'.$daid, $daid, array(1, -1))) {
 	if(!$dw && !$dh && $attach['tid'] != $id) {
 	       dheader('location: '.$_G['siteurl'].'static/image/common/none.gif');
 	}
         dheader('Expires: '.gmdate('D, d M Y H:i:s', TIMESTAMP + 3600).' GMT');
 	if($attach['remote']) {
-		$filename = $_G['setting']['ftp']['attachurl'].'forum/'.$attach['attachment'];
+		$sign  = upyun_gen_sign('/forum/'.$attach['attachment']);
+		$filename = $_G['setting']['ftp']['attachurl'].'forum/'.$attach['attachment'] . '?_upt=' . $sign;
 	} else {
 		$filename = $_G['setting']['attachdir'].'forum/'.$attach['attachment'];
 	}

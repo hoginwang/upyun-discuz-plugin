@@ -36,11 +36,11 @@ function attachtype($type, $returnval = 'html') {
 			$typeid = 13;
 		} elseif(preg_match("/pdf|^pdf\t/", $type)) {
 			$typeid = 12;
-		} elseif(preg_match("/image|^(jpg|gif|png|bmp)\t/", $type)) {
+		} elseif(preg_match("/image|^(jpg|gif|png|bmp|webp)\t/", $type)) {
 			$typeid = 11;
 		} elseif(preg_match("/flash|^(swf|fla|flv|swi)\t/", $type)) {
 			$typeid = 10;
-		} elseif(preg_match("/audio|video|^(wav|mid|mp3|m3u|wma|asf|asx|vqf|mpg|mpeg|avi|wmv)\t/", $type)) {
+		} elseif(preg_match("/audio|video|^(wav|mid|mp3|m3u|wma|asf|asx|vqf|mpg|mpeg|avi|wmv|mov|mp4|m4a|m4v|3gp|ogv|ogg|webm|weba|aac|flac)\t/", $type)) {
 			$typeid = 9;
 		} elseif(preg_match("/real|^(ra|rm|rv)\t/", $type)) {
 			$typeid = 8;
@@ -48,11 +48,11 @@ function attachtype($type, $returnval = 'html') {
 			$typeid = 7;
 		} elseif(preg_match("/text|^(txt|rtf|wri|chm)\t/", $type)) {
 			$typeid = 6;
-		} elseif(preg_match("/word|powerpoint|^(doc|ppt)\t/", $type)) {
+		} elseif(preg_match("/word|excel|powerpoint|^(doc|xls|ppt|docx|xlsx|pptx)\t/", $type)) {
 			$typeid = 5;
 		} elseif(preg_match("/^rar\t/", $type)) {
 			$typeid = 4;
-		} elseif(preg_match("/compressed|^(zip|arj|arc|cab|lzh|lha|tar|gz)\t/", $type)) {
+		} elseif(preg_match("/compressed|^(zip|arj|arc|cab|lzh|lha|tar|gz|7z|xz|bz2)\t/", $type)) {
 			$typeid = 3;
 		} elseif(preg_match("/octet-stream|^(exe|com|bat|dll)\t/", $type)) {
 			$typeid = 2;
@@ -70,7 +70,7 @@ function attachtype($type, $returnval = 'html') {
 }
 
 function parseattach($attachpids, $attachtags, &$postlist, $skipaids = array()) {
-	global $_G;
+	global $_G, $aimgs, $firstimgs;
 	if(!$attachpids) {
 		return;
 	}
@@ -80,13 +80,13 @@ function parseattach($attachpids, $attachtags, &$postlist, $skipaids = array()) 
 	foreach(C::t('forum_attachment_n')->fetch_all_by_id('tid:'.$_G['tid'], 'pid', $attachpids) as $attach) {
 		$attachexists = TRUE;
 		if($skipaids && in_array($attach['aid'], $skipaids)) {
-			$skipattachcode[$attach[pid]][] = "/\[attach\]$attach[aid]\[\/attach\]/i";
+			$skipattachcode[$attach['pid']][] = "/\[attach\]{$attach['aid']}\[\/attach\]/i";
 			continue;
 		}
 		$attached = 0;
 		$extension = strtolower(fileext($attach['filename']));
 		$attach['ext'] = $extension;
-		$attach['imgalt'] = $attach['isimage'] ? strip_tags(str_replace('"', '\"', $attach['description'] ? $attach['description'] : $attach['filename'])) : '';
+		$attach['imgalt'] = $attach['isimage'] ? strip_tags(str_replace('"', '', $attach['description'] ? $attach['description'] : $attach['filename'])) : '';
 		$attach['attachicon'] = attachtype($extension."\t".$attach['filetype']);
 		$attach['attachsize'] = sizecount($attach['filesize']);
 		if($attach['isimage'] && !$_G['setting']['attachimgpost']) {
@@ -94,28 +94,33 @@ function parseattach($attachpids, $attachtags, &$postlist, $skipaids = array()) 
 		}
 		$attach['attachimg'] = $attach['isimage'] && (!$attach['readperm'] || $_G['group']['readaccess'] >= $attach['readperm']) ? 1 : 0;
 		if($attach['attachimg']) {
-			$GLOBALS['aimgs'][$attach['pid']][] = $attach['aid'];
+			$aimgs[$attach['pid']][] = $attach['aid'];
 		}
 		if($attach['price']) {
 			if($_G['setting']['maxchargespan'] && TIMESTAMP - $attach['dateline'] >= $_G['setting']['maxchargespan'] * 3600) {
-				C::t('forum_attachment_n')->update('tid:'.$_G['tid'], $attach['aid'], array('price' => 0));
+				C::t('forum_attachment_n')->update_attachment('tid:'.$_G['tid'], $attach['aid'], array('price' => 0));
 				$attach['price'] = 0;
 			} elseif(!$_G['forum_attachmentdown'] && $_G['uid'] != $attach['uid']) {
 				$payaids[$attach['aid']] = $attach['pid'];
 			}
 		}
 		$attach['payed'] = $_G['forum_attachmentdown'] || $_G['uid'] == $attach['uid'] ? 1 : 0;
-		$attach['url'] = ($attach['remote'] ? $_G['setting']['ftp']['attachurl'] : $_G['setting']['attachurl']).'forum/';
+		// 又拍云
+		$upyun_url_prefix =rtrim($_G['cache']['plugin']['upyun']['url'], '/') . '/';
+		$attach['url'] = ($attach['remote'] ? $upyun_url_prefix : $_G['setting']['attachurl']).'forum/';
 		$attach['dbdateline'] = $attach['dateline'];
 		$attach['dateline'] = dgmdate($attach['dateline'], 'u');
 		$hideattachs = $_G['adminid'] != 1 && $_G['setting']['bannedmessages'] & 1 && (($postlist[$attach['pid']]['authorid'] && !$postlist[$attach['pid']]['username'])
 				|| ($postlist[$attach['pid']]['groupid'] == 4 || $postlist[$attach['pid']]['groupid'] == 5) || $postlist[$attach['pid']]['status'] == -1 || $postlist[$attach['pid']]['memberstatus'])
 				|| $_G['adminid'] != 1 && $postlist[$attach['pid']]['status'] & 1 || $postlist[$attach['pid']]['first'] && $_G['forum_threadpay'];
 		if(!$hideattachs) {
+			if(defined('IN_MOBILE_API')) {
+				$attach['aidencode'] = packaids($attach);
+			}
 			$postlist[$attach['pid']]['attachments'][$attach['aid']] = $attach;
 		}
 		if(!defined('IN_MOBILE_API') && !empty($attachtags[$attach['pid']]) && is_array($attachtags[$attach['pid']]) && in_array($attach['aid'], $attachtags[$attach['pid']])) {
-			$findattach[$attach['pid']][$attach['aid']] = "/\[attach\]$attach[aid]\[\/attach\]/i";
+			$findattach[$attach['pid']][$attach['aid']] = "/\[attach\]{$attach['aid']}\[\/attach\]/i";
 			$attached = 1;
 		}
 
@@ -126,7 +131,7 @@ function parseattach($attachpids, $attachtags, &$postlist, $skipaids = array()) 
 					$postlist[$attach['pid']]['imagelistcount']++;
 				}
 				if($postlist[$attach['pid']]['first']) {
-					$GLOBALS['firstimgs'][] = $attach['aid'];
+					$firstimgs[] = $attach['aid'];
 				}
 			} else {
 				if(!$hideattachs && (!$_G['forum_skipaidlist'] || !in_array($attach['aid'], $_G['forum_skipaidlist']))) {
@@ -170,7 +175,7 @@ function parseattach($attachpids, $attachtags, &$postlist, $skipaids = array()) 
 		loadcache('posttableids');
 		$posttableids = $_G['cache']['posttableids'] ? $_G['cache']['posttableids'] : array('0');
 		foreach($posttableids as $id) {
-			C::t('forum_post')->update($id, $attachpids, array('attachment' => '0'), true);
+			C::t('forum_post')->update_post($id, $attachpids, array('attachment' => '0'), true);
 		}
 	}
 }
@@ -206,7 +211,7 @@ function getattachexif($aid, $path = '') {
 	global $_G;
 	$return = $filename = '';
 	if(!$path) {
-		if($attach = C::t('forum_attachment_n')->fetch('aid:'.$aid, $aid, array(1, -1))) {
+		if($attach = C::t('forum_attachment_n')->fetch_attachment('aid:'.$aid, $aid, array(1, -1))) {
 			if($attach['remote']) {
 				$filename = $_G['setting']['ftp']['attachurl'].'forum/'.$attach['attachment'];
 			} else {
