@@ -20,7 +20,10 @@ if(empty($attach)) {
 }
 
 if($operation == 'delete') {
-	if(!$_G['group']['allowmanagearticle'] && $_G['uid'] != $attach['uid']) {
+	if(!$_G['group']['allowmanagearticle'] && ($_G['uid'] != $attach['uid'] || $aid != $attach['aid'])) {
+		showmessage('portal_attachment_nopermission_delete');
+	}
+	if(!isset($_GET['formhash']) || formhash() != $_GET['formhash']) {
 		showmessage('portal_attachment_nopermission_delete');
 	}
 	if($aid) {
@@ -62,12 +65,14 @@ if($operation == 'delete') {
 	}
 
 	$filesize = $attach['filesize'];
-	$attach['filename'] = '"'.(strtolower(CHARSET) == 'utf-8' && strexists($_SERVER['HTTP_USER_AGENT'], 'MSIE') ? urlencode($attach['filename']) : $attach['filename']).'"';
+	$filenameencode = strtolower(CHARSET) == 'utf-8' ? rawurlencode($attach['filename']) : rawurlencode(diconv($attach['filename'], CHARSET, 'UTF-8'));
+
+	$rfc6266blacklist = strexists($_SERVER['HTTP_USER_AGENT'], 'UCBrowser') || strexists($_SERVER['HTTP_USER_AGENT'], 'Quark') || strexists($_SERVER['HTTP_USER_AGENT'], 'SogouM') || strexists($_SERVER['HTTP_USER_AGENT'], 'baidu');
 
 	dheader('Date: '.gmdate('D, d M Y H:i:s', $attach['dateline']).' GMT');
 	dheader('Last-Modified: '.gmdate('D, d M Y H:i:s', $attach['dateline']).' GMT');
 	dheader('Content-Encoding: none');
-	dheader('Content-Disposition: attachment; filename='.$attach['filename']);
+	dheader('Content-Disposition: attachment; filename="'.$filenameencode.'"'.(($attach['filename'] == $filenameencode || $rfc6266blacklist) ? '' : '; filename*=utf-8\'\''.$filenameencode));
 	dheader('Content-Type: '.$attach['filetype']);
 	dheader('Content-Length: '.$filesize);
 
@@ -110,8 +115,8 @@ function getlocalfile($filename, $readmod = 2, $range = 0) {
 			@fseek($fp, $range);
 			if(function_exists('fpassthru') && ($readmod == 3 || $readmod == 4)) {
 				@fpassthru($fp);
-			} else {
-				echo @fread($fp, filesize($filename));
+			} else if(filesize($filename)) {
+				echo fread($fp, filesize($filename));
 			}
 		}
 		@fclose($fp);

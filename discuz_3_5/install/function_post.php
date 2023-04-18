@@ -154,7 +154,7 @@ function ftpupload($aids, $uid = 0) {
 		}
 
 		if($remoteaids) {
-			C::t('forum_attachment_n')->update($attachtable, $remoteaids, array('remote' => 1));
+			C::t('forum_attachment_n')->update_attachment($attachtable, $remoteaids, array('remote' => 1));
 		}
 	}
 	if($pics) {
