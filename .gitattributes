@@ -1,0 +1,6 @@
+* text=auto
+
+/.gitignore export-ignore
+/php-sdk/.editorconfig export-ignore
+/php-sdk/.gitattributes export-ignore
+/php-sdk/.gitignore export-ignore
