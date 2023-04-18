@@ -91,8 +91,8 @@
 			</item>
 			<item id="5">
 				<item id="displayorder"><![CDATA[5]]></item>
-				<item id="title"><![CDATA[表单 API 密钥]]></item>
-				<item id="description"><![CDATA[选填 建议填写，否则将无法激活大文件分块上传]]></item>
+				<item id="title"><![CDATA[（已停用）表单 API 密钥]]></item>
+				<item id="description"><![CDATA[插件 1.4.5 版本起转用 UPYUN 新 PHP-SDK，但当前版本未适配新 SDK 的表单 API。选填 建议填写，否则将无法激活大文件分块上传]]></item>
 				<item id="variable"><![CDATA[form_api_key]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
