@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <root>
 	<item id="Title"><![CDATA[Discuz! Plugin]]></item>
-	<item id="Version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4,X3.5]]></item>
-	<item id="Time"><![CDATA[2017-09-13]]></item>
-	<item id="From"><![CDATA[https://www.upyun.com]]></item>
+	<item id="Version"><![CDATA[X3.5]]></item>
+	<item id="Time"><![CDATA[2023-04-19]]></item>
+	<item id="From"><![CDATA[https://github.com/upyun/discuz-plugin]]></item>
 	<item id="Data">
 		<item id="plugin">
 			<item id="available"><![CDATA[1]]></item>
 			<item id="adminid"><![CDATA[1]]></item>
 			<item id="name"><![CDATA[UPYUN 雲加速]]></item>
 			<item id="identifier"><![CDATA[upyun]]></item>
-			<item id="description"><![CDATA[UPYUN 官方 Discuz! 插件，支持 Discuz! X3.0 以上版本]]></item>
+			<item id="description"><![CDATA[UPYUN Discuz! 插件，支援 Discuz! X3.5 版本]]></item>
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[upyun/]]></item>
-			<item id="copyright"><![CDATA[2005 - 2017 upyun.com, All Rights Reserved.]]></item>
+			<item id="copyright"><![CDATA[2023 https://github.com/upyun/discuz-plugin]]></item>
 			<item id="version"><![CDATA[1.4.5]]></item>
 			<item id="__modules">
 				<item id="0">
@@ -42,7 +42,7 @@
 				</item>
 			</item>
 		</item>
-		<item id="version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4,X3.5]]></item>
+		<item id="version"><![CDATA[X3.5]]></item>
 		<item id="var">
 			<item id="0">
 				<item id="displayorder"><![CDATA[0]]></item>
@@ -92,7 +92,7 @@
 			<item id="5">
 				<item id="displayorder"><![CDATA[5]]></item>
 				<item id="title"><![CDATA[（已停用）表單 API 密鑰]]></item>
-				<item id="description"><![CDATA[插件 1.4.5 版本起轉用 UPYUN 新 PHP-SDK，但當前版本未適配新 SDK 的表單 API。選填 建議填寫，否則將無法激活大檔案分塊上傳]]></item>
+				<item id="description"><![CDATA[插件 1.4.5 版本起轉用 UPYUN 新 PHP-SDK，但當前版本未適配新 SDK 的表單 API。選填 建議填寫，否則將無法啓用大檔案分塊上傳]]></item>
 				<item id="variable"><![CDATA[form_api_key]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
@@ -100,7 +100,7 @@
 			</item>
 			<item id="6">
 				<item id="displayorder"><![CDATA[6]]></item>
-				<item id="title"><![CDATA[防盜鏈 TOKEN]]></item>
+				<item id="title"><![CDATA[防盜連 TOKEN]]></item>
 				<item id="description"><![CDATA[選填 只能在 UPYUN 空間綁定了和論壇根域名相同 的子域名時，才能設置，否則導致附件無法被訪問。例如論壇域名為 www.discuz.com 時，如果 UPYUN 空間訪問域名為 static.discuz.com 或其他類似 **.discuz.com 格式的域名則可以使用]]></item>
 				<item id="variable"><![CDATA[token]]></item>
 				<item id="type"><![CDATA[text]]></item>
@@ -109,8 +109,8 @@
 			</item>
 			<item id="7">
 				<item id="displayorder"><![CDATA[7]]></item>
-				<item id="title"><![CDATA[防盜鏈過期時間（單位：秒）]]></item>
-				<item id="description"><![CDATA[選填 說明：如果開啟防盜鏈功能則必須填寫大於 0 的值]]></item>
+				<item id="title"><![CDATA[防盜連過期時間（單位：秒）]]></item>
+				<item id="description"><![CDATA[選填 說明：如果開啟防盜連功能則必須填寫大於 0 的值]]></item>
 				<item id="variable"><![CDATA[token_timeout]]></item>
 				<item id="type"><![CDATA[number]]></item>
 				<item id="value"><![CDATA[]]></item>

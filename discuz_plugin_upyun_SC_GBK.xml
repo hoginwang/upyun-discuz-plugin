@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <root>
 	<item id="Title"><![CDATA[Discuz! Plugin]]></item>
-	<item id="Version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4,X3.5]]></item>
-	<item id="Time"><![CDATA[2017-09-13]]></item>
-	<item id="From"><![CDATA[https://www.upyun.com]]></item>
+	<item id="Version"><![CDATA[X3.5]]></item>
+	<item id="Time"><![CDATA[2023-04-19]]></item>
+	<item id="From"><![CDATA[https://github.com/upyun/discuz-plugin]]></item>
 	<item id="Data">
 		<item id="plugin">
 			<item id="available"><![CDATA[1]]></item>
 			<item id="adminid"><![CDATA[1]]></item>
 			<item id="name"><![CDATA[UPYUN ÔÆ¼ÓËÙ]]></item>
 			<item id="identifier"><![CDATA[upyun]]></item>
-			<item id="description"><![CDATA[UPYUN ¹Ù·½ Discuz! ²å¼þ£¬Ö§³Ö Discuz! X3.0 ÒÔÉÏ°æ±¾]]></item>
+			<item id="description"><![CDATA[UPYUN ¹Ù·½ Discuz! ²å¼þ£¬Ö§³Ö Discuz! X3.5 °æ±¾]]></item>
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[upyun/]]></item>
-			<item id="copyright"><![CDATA[2005 - 2017 upyun.com, All Rights Reserved.]]></item>
+			<item id="copyright"><![CDATA[2023 https://github.com/upyun/discuz-plugin]]></item>
 			<item id="version"><![CDATA[1.4.5]]></item>
 			<item id="__modules">
 				<item id="0">
@@ -42,7 +42,7 @@
 				</item>
 			</item>
 		</item>
-		<item id="version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4,X3.5]]></item>
+		<item id="version"><![CDATA[X3.5]]></item>
 		<item id="var">
 			<item id="0">
 				<item id="displayorder"><![CDATA[0]]></item>
