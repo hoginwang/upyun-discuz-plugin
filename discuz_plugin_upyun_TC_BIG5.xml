@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <root>
 	<item id="Title"><![CDATA[Discuz! Plugin]]></item>
-	<item id="Version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4]]></item>
+	<item id="Version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4,X3.5]]></item>
 	<item id="Time"><![CDATA[2017-09-13]]></item>
 	<item id="From"><![CDATA[https://www.upyun.com]]></item>
 	<item id="Data">
@@ -14,7 +14,7 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[upyun/]]></item>
 			<item id="copyright"><![CDATA[2005 - 2017 upyun.com, All Rights Reserved.]]></item>
-			<item id="version"><![CDATA[1.3.0]]></item>
+			<item id="version"><![CDATA[1.4.5]]></item>
 			<item id="__modules">
 				<item id="0">
 					<item id="name"><![CDATA[upyun]]></item>
@@ -42,7 +42,7 @@
 				</item>
 			</item>
 		</item>
-		<item id="version"><![CDATA[X3,X3.1,X3.2]]></item>
+		<item id="version"><![CDATA[X3,X3.1,X3.2,X3.3,X3.4,X3.5]]></item>
 		<item id="var">
 			<item id="0">
 				<item id="displayorder"><![CDATA[0]]></item>
