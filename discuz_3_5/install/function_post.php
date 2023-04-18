@@ -143,7 +143,7 @@ function ftpupload($aids, $uid = 0) {
 		foreach(C::t('forum_attachment_n')->fetch_all_attachment($attachtable, $aids, 0) as $attach) {
 			if(ftpperm(fileext($attach['filename']), $attach['filesize'])) {
 				if(ftpcmd('upload', 'forum/'.$attach['attachment']) && (!$attach['thumb'] || ftpcmd('upload', 'forum/'.getimgthumbname($attach['attachment'])))) {
-					// 又拍云
+					// 引入UPYUN - 上傳附件時是否本地備份
 					if(!$_G['cache']['plugin']['upyun']['local_backup']) dunlink($attach);
 					$remoteaids[$attach['aid']] = $attach['aid'];
 					if($attach['picid']) {
@@ -675,9 +675,9 @@ function setthreadcover($pid, $tid = 0, $aid = 0, $countimg = 0, $imgurl = '') {
 			}
 			$pid = empty($pid) ? $attach['pid'] : $pid;
 			$tid = empty($tid) ? $attach['tid'] : $tid;
-			// 又拍云
-			$sign  = upyun_gen_sign('/forum/'.$attach['attachment']);
-			$picsource = ($attach['remote'] ? $_G['setting']['ftp']['attachurl'] : $_G['setting']['attachurl']).'forum/'.$attach['attachment'].'?_upt='.$sign;
+			// 引入UPYUN - 檢查防盜鏈
+			$sign = ($_G['cache']['plugin']['upyun']['token'] && $_G['cache']['plugin']['upyun']['token_timeout'] ? upyun_gen_sign('/forum/'.$attach['attachment']) : FALSE);
+			$picsource = ($attach['remote'] ? $_G['setting']['ftp']['attachurl'] : $_G['setting']['attachurl']).'forum/'.$attach['attachment'].($sign ? '?_upt='.$sign : '');
 		} else {
 			return true;
 		}

@@ -60,7 +60,7 @@ if($operation == 'delete') {
 		list($range) = explode('-',(str_replace('bytes=', '', $_SERVER['HTTP_RANGE'])));
 	}
 
-	// 又拍云
+	// 引入UPYUN
 	include_once DISCUZ_ROOT . 'source/plugin/upyun/function_upyun.php';
 	upyun_attachment_download($attach, 'portal');
 

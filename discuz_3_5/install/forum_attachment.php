@@ -249,7 +249,7 @@ $db = DB::object();
 $db->close();
 !$_G['config']['output']['gzip'] && ob_end_clean();
 
-// 又拍云
+// 引入UPYUN
 include_once DISCUZ_ROOT . 'source/plugin/upyun/function_upyun.php';
 upyun_attachment_download($attach, 'forum');
 

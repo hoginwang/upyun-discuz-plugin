@@ -105,8 +105,8 @@ function parseattach($attachpids, $attachtags, &$postlist, $skipaids = array()) 
 			}
 		}
 		$attach['payed'] = $_G['forum_attachmentdown'] || $_G['uid'] == $attach['uid'] ? 1 : 0;
-		// 又拍云
-		$upyun_url_prefix =rtrim($_G['cache']['plugin']['upyun']['url'], '/') . '/';
+		// 引入UPYUN
+		$upyun_url_prefix = rtrim($_G['cache']['plugin']['upyun']['url'], '/') . '/';
 		$attach['url'] = ($attach['remote'] ? $upyun_url_prefix : $_G['setting']['attachurl']).'forum/';
 		$attach['dbdateline'] = $attach['dateline'];
 		$attach['dateline'] = dgmdate($attach['dateline'], 'u');

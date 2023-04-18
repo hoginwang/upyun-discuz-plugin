@@ -38,8 +38,9 @@ if($attach = C::t('forum_attachment_n')->fetch_attachment('aid:'.$daid, $daid, a
 	}
         dheader('Expires: '.gmdate('D, d M Y H:i:s', TIMESTAMP + 3600).' GMT');
 	if($attach['remote']) {
-		$sign  = upyun_gen_sign('/forum/'.$attach['attachment']);
-		$filename = $_G['setting']['ftp']['attachurl'].'forum/'.$attach['attachment'] . '?_upt=' . $sign;
+		// 引入UPYUN - 檢查防盜鏈
+		$sign = ($_G['cache']['plugin']['upyun']['token'] && $_G['cache']['plugin']['upyun']['token_timeout'] ? upyun_gen_sign('/forum/'.$attach['attachment']) : FALSE);
+		$filename = $_G['setting']['ftp']['attachurl'].'forum/'.$attach['attachment'].($sign ? '?_upt='.$sign : '');
 	} else {
 		$filename = $_G['setting']['attachdir'].'forum/'.$attach['attachment'];
 	}

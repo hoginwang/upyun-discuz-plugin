@@ -323,11 +323,11 @@ function pic_get($filepath, $type, $thumb, $remote, $return_thumb=1, $hastype = 
 		$type = 'forum';
 	}
 	$type = $hastype ? '' : $type.'/';
-	// 又拍云
+	// 引入UPYUN
 	if(!$remote) {
-		return $_G['setting']['attachurl'] . $type . $url;
+		return $_G['setting']['attachurl'].$type.$url;
 	}
-	$upyun_url_prefix = rtrim($_G['cache']['plugin']['upyun']['url'], '/') . '/';
+	$upyun_url_prefix = rtrim($_G['cache']['plugin']['upyun']['url'], '/').'/';
 	return $upyun_url_prefix.$type.$url;
 }
 
