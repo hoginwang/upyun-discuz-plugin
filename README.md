@@ -19,7 +19,7 @@ https://techs.b0.upaiyun.com/videos/cdnpage/Discuz.html
 
 ### 安装说明
 
-1. 下载插件([点击这里](https://github.com/hoginwnag/upyun-discuz-plugin/archive/master.zip))放到 Discuz! `source/plugin` 目录下，并将目录重命名为 `upyun`。
+1. 下载插件([点击这里](https://github.com/hoginwang/upyun-discuz-plugin/archive/refs/heads/master.zip))放到 Discuz! `source/plugin` 目录下，并将目录重命名为 `upyun`。
 
 2. 进入 Discuz! 管理后台 -> 插件，选择应用“UPYUN 云加速” 点击安装。
 
