@@ -2,18 +2,18 @@
 <root>
 	<item id="Title"><![CDATA[Discuz! Plugin]]></item>
 	<item id="Version"><![CDATA[X3.5]]></item>
-	<item id="Time"><![CDATA[2023-04-19]]></item>
-	<item id="From"><![CDATA[https://github.com/upyun/discuz-plugin]]></item>
+	<item id="Time"><![CDATA[2023-11-09]]></item>
+	<item id="From"><![CDATA[https://github.com/hoginwang/upyun-discuz-plugin]]></item>
 	<item id="Data">
 		<item id="plugin">
 			<item id="available"><![CDATA[1]]></item>
 			<item id="adminid"><![CDATA[1]]></item>
-			<item id="name"><![CDATA[UPYUN 雲加速]]></item>
+			<item id="name"><![CDATA[UPYUN 遠程附件]]></item>
 			<item id="identifier"><![CDATA[upyun]]></item>
 			<item id="description"><![CDATA[UPYUN Discuz! 插件，支援 Discuz! X3.5 版本]]></item>
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[upyun/]]></item>
-			<item id="copyright"><![CDATA[2023 https://github.com/upyun/discuz-plugin]]></item>
+			<item id="copyright"><![CDATA[2023 Contributors]]></item>
 			<item id="version"><![CDATA[1.4.5-20231109]]></item>
 			<item id="__modules">
 				<item id="0">
