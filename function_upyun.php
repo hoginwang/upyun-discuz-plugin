@@ -150,13 +150,13 @@ function upyun_gen_signA($path = '/') {
 
 function upyun_get_install_files() {
 	$files = array(
-		DISCUZ_ROOT . "source/module/forum/forum_attachment.php",
-		DISCUZ_ROOT . "source/module/portal/portal_attachment.php",
 		DISCUZ_ROOT . "source/class/discuz/discuz_ftp.php",
 		DISCUZ_ROOT . "source/function/function_attachment.php",
 		DISCUZ_ROOT . "source/function/function_home.php",
-		DISCUZ_ROOT . "source/module/forum/forum_image.php",
 		DISCUZ_ROOT . "source/function/function_post.php",
+		DISCUZ_ROOT . "source/module/forum/forum_attachment.php",
+		DISCUZ_ROOT . "source/module/forum/forum_image.php",
+		DISCUZ_ROOT . "source/module/portal/portal_attachment.php",
 	);
 	return $files;
 }
@@ -166,12 +166,12 @@ function upyun_get_file_md5() {
 		case 'X3.5':
 			return array(
 				'discuz_ftp.php' => '65e20ff0b6a2a2946b873c4b531a924f',
-				'forum_attachment.php' => 'c0cbedeafe2ad83b3399aab7999df1ec',
-				'forum_image.php' => '7442f1f6e8908e909cd00324dc220f70',
 				'function_attachment.php' => '5a5e8bc6d7a1fe47d130140872e8ce38',
 				'function_home.php' => '7294f9d64605447044524f5d086833b2',
-				'function_post.php' => '7e65b5f188775152ee8f47ad5c079c48',
-				'portal_attachment.php' => '56ace87d41a73f975150775e6e5ad79a',
+				'function_post.php' => '3b907aba6a09cfbbac7937007bc87ae2',
+				'forum_attachment.php' => '933649ad83bbdf6f9a32dc5996a764e0',
+				'forum_image.php' => '7442f1f6e8908e909cd00324dc220f70',
+				'portal_attachment.php' => '86b3faa2eb8b69e1b3fe29751537594e',
 			);
 			break;
 		default:
