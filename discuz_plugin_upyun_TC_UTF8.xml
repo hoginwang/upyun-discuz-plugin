@@ -14,7 +14,7 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[upyun/]]></item>
 			<item id="copyright"><![CDATA[2023 https://github.com/upyun/discuz-plugin]]></item>
-			<item id="version"><![CDATA[1.4.5]]></item>
+			<item id="version"><![CDATA[1.4.5-20231109]]></item>
 			<item id="__modules">
 				<item id="0">
 					<item id="name"><![CDATA[upyun]]></item>
