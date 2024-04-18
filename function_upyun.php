@@ -73,7 +73,8 @@ function upyun_file_check($files) {
 function upyun_attachment_download($attach, $module) {
 	global $_G;
 	$upyun_config = $_G['cache']['plugin']['upyun'];
-	$url = rtrim($upyun_config['url'], '/') . "/$module/";
+	$dl_url = empty($upyun_config['dl_url']) ? $upyun_config['url'] : $upyun_config['dl_url'];
+	$url = rtrim($dl_url, '/') . "/$module/";
 	if($attach['remote'] && !$_G['setting']['ftp']['hideurl']){
 		if(strtolower(CHARSET) == 'gbk') {
 			$attach['filename'] = urlencode(iconv('GBK', 'UTF-8', $attach['filename']));

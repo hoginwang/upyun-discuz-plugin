@@ -14,7 +14,7 @@
 			<item id="datatables"><![CDATA[]]></item>
 			<item id="directory"><![CDATA[upyun/]]></item>
 			<item id="copyright"><![CDATA[2023 Contributors]]></item>
-			<item id="version"><![CDATA[1.4.5-20231109]]></item>
+			<item id="version"><![CDATA[1.4.6-20231109]]></item>
 			<item id="__modules">
 				<item id="0">
 					<item id="name"><![CDATA[upyun]]></item>
@@ -73,7 +73,7 @@
 			</item>
 			<item id="3">
 				<item id="displayorder"><![CDATA[3]]></item>
-				<item id="title"><![CDATA[訪問域名]]></item>
+				<item id="title"><![CDATA[一般訪問域名]]></item>
 				<item id="description"><![CDATA[必填 http:// 或 https:// 開頭（可以為 UPYUN 空間的預設訪問域名或空間綁定成功域名）]]></item>
 				<item id="variable"><![CDATA[url]]></item>
 				<item id="type"><![CDATA[text]]></item>
@@ -82,6 +82,15 @@
 			</item>
 			<item id="4">
 				<item id="displayorder"><![CDATA[4]]></item>
+				<item id="title"><![CDATA[附件下載域名]]></item>
+				<item id="description"><![CDATA[選填 留空則沿用一般訪問域名]]></item>
+				<item id="variable"><![CDATA[dl_url]]></item>
+				<item id="type"><![CDATA[text]]></item>
+				<item id="value"><![CDATA[]]></item>
+				<item id="extra"><![CDATA[]]></item>
+			</item>
+			<item id="5">
+				<item id="displayorder"><![CDATA[5]]></item>
 				<item id="title"><![CDATA[本地備份]]></item>
 				<item id="description"><![CDATA[開啟本地備份時，本地伺服器將保留一份圖片備份]]></item>
 				<item id="variable"><![CDATA[local_backup]]></item>
@@ -89,8 +98,8 @@
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
-			<item id="5">
-				<item id="displayorder"><![CDATA[5]]></item>
+			<item id="6">
+				<item id="displayorder"><![CDATA[6]]></item>
 				<item id="title"><![CDATA[連結認證方式]]></item>
 				<item id="description"><![CDATA[又拍雲預設：在連結加入 _upt 變數，並設定 cookies。參見 https://help.upyun.com/knowledge-base/cdn-token-limite/
 方法 A：在連結加入 sign 變數，適合雲存儲域名與論壇域名不處於一個域的情況。參見 阿里雲 https://help.aliyun.com/document_detail/85113.htm、騰訊雲 https://cloud.tencent.com/document/product/228/76110]]></item>
@@ -100,27 +109,27 @@
 				<item id="extra"><![CDATA[0 = 又拍雲預設
 1 = 方法A]]></item>
 			</item>
-			<item id="6">
-				<item id="displayorder"><![CDATA[6]]></item>
-				<item id="title"><![CDATA[防盜連 TOKEN]]></item>
+			<item id="7">
+				<item id="displayorder"><![CDATA[7]]></item>
+				<item id="title"><![CDATA[防盜連結 TOKEN]]></item>
 				<item id="description"><![CDATA[選填 如認證方式選擇「又拍雲預設」，则只能在 UPYUN 空間綁定了和論壇根域名相同的子域名時才能設定，否則將導致附件無法被訪問。例如論壇域名為 www.discuz.com 時，如果 UPYUN 空間訪問域名為 static.discuz.com 或其他類似 *.discuz.com 格式的域名則可以使用]]></item>
 				<item id="variable"><![CDATA[token]]></item>
 				<item id="type"><![CDATA[text]]></item>
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
-			<item id="7">
-				<item id="displayorder"><![CDATA[7]]></item>
-				<item id="title"><![CDATA[防盜連過期時間（單位：秒）]]></item>
-				<item id="description"><![CDATA[選填 說明：如果開啟防盜鏈功能則必須填寫大於 0 的值。留空或填寫 0 即不啓用防盜連結認證]]></item>
+			<item id="8">
+				<item id="displayorder"><![CDATA[8]]></item>
+				<item id="title"><![CDATA[防盜連結過期時間（單位：秒）]]></item>
+				<item id="description"><![CDATA[選填 說明：如果開啟防盜連結功能則必須填寫大於 0 的值。留空或填寫 0 即不啓用防盜連結認證]]></item>
 				<item id="variable"><![CDATA[token_timeout]]></item>
 				<item id="type"><![CDATA[number]]></item>
 				<item id="value"><![CDATA[]]></item>
 				<item id="extra"><![CDATA[]]></item>
 			</item>
-			<item id="8">
-				<item id="displayorder"><![CDATA[8]]></item>
-				<item id="title"><![CDATA[（已停用）表單 API 密鑰]]></item>
+			<item id="9">
+				<item id="displayorder"><![CDATA[9]]></item>
+				<item id="title"><![CDATA[（暫時停用）表單 API 密鑰]]></item>
 				<item id="description"><![CDATA[插件 1.4.5 版本起轉用 UPYUN 新 PHP-SDK，但當前版本未適配新 SDK 的表單 API。選填 建議填寫，否則將無法啓用大檔案分塊上傳]]></item>
 				<item id="variable"><![CDATA[form_api_key]]></item>
 				<item id="type"><![CDATA[text]]></item>
